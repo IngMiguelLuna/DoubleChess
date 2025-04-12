@@ -2,22 +2,13 @@ class Piece:
     def __init__(self, color):
         self.color = color
 
-    def __str__(self):
-        # Map piece names to asset keys
-        piece_map = {
-            'Peon': 'p',
-            'Torre': 'r',
-            'Caballo': 'n',
-            'Alfil': 'b',
-            'Reina': 'q',
-            'Rey': 'k'
-        }
-        prefix = piece_map[self.__class__.__name__]
-        return prefix.upper() if self.color == "white" else prefix.lower()
-
     def get_score(self):
         # Default score for a generic piece
         return 0
+
+    def __str__(self):
+        # Default string representation for a generic piece
+        return "P" if self.color == "white" else "p"
 
 class Peon(Piece):
     def valid_moves(self, position, board):
@@ -45,6 +36,9 @@ class Peon(Piece):
 
     def get_score(self):
         return 1
+
+    def __str__(self):
+        return "P" if self.color == "white" else "p"
 
 class Torre(Piece):
     def valid_moves(self, position, board):
@@ -92,6 +86,9 @@ class Torre(Piece):
     def get_score(self):
         return 5
 
+    def __str__(self):
+        return "R" if self.color == "white" else "r"
+
 class Caballo(Piece):
     def valid_moves(self, position, board):
         moves = []
@@ -108,6 +105,9 @@ class Caballo(Piece):
 
     def get_score(self):
         return 3
+
+    def __str__(self):
+        return "N" if self.color == "white" else "n"
 
 class Alfil(Piece):
     def valid_moves(self, position, board):
@@ -155,6 +155,9 @@ class Alfil(Piece):
     def get_score(self):
         return 3
 
+    def __str__(self):
+        return "B" if self.color == "white" else "b"
+
 class Reina(Piece):
     def valid_moves(self, position, board):
         # Combine rook and bishop moves
@@ -164,6 +167,9 @@ class Reina(Piece):
 
     def get_score(self):
         return 9
+
+    def __str__(self):
+        return "Q" if self.color == "white" else "q"
 
 class Rey(Piece):
     def valid_moves(self, position, board):
@@ -181,3 +187,6 @@ class Rey(Piece):
 
     def get_score(self):
         return 0  # Kings are not scored for this logic
+
+    def __str__(self):
+        return "K" if self.color == "white" else "k"

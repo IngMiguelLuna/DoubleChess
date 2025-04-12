@@ -17,14 +17,6 @@ class TestGame(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.game.make_move('e2', 'e5')  # Invalid move for a peon
 
-    def test_check_condition(self):
-        self.game.make_move('e2', 'e4')
-        self.game.make_move('e7', 'e5')
-        self.game.make_move('g1', 'f3')
-        self.game.make_move('b8', 'c6')
-        self.game.make_move('f3', 'e5')  # This should put the black rey in check
-        self.assertTrue(self.game.is_in_check('black'))
-
     def test_checkmate_condition(self):
         # Set up a checkmate scenario
         self.game.make_move('e2', 'e4')

@@ -17,8 +17,6 @@ class ChessGUI:
         self.current_turn = "white"
         self.captured_white = []  # List to store pieces captured by black
         self.captured_black = []  # List to store pieces captured by white
-        self.check_message = None  # Message to display when a player is in check
-        self.check_message_timer = 0  # Timer for how long the message is displayed
         self.game = ChessGame()  # Initialize ChessGame to access game logic
         self.winner_message = None  # Message to display the winner
 
@@ -124,24 +122,6 @@ class ChessGUI:
         for move in self.valid_moves:
             pygame.draw.circle(self.screen, pygame.Color("green"), (80 + move[1] * 80 + 40, move[0] * 80 + 40), 10)
 
-    def display_check_message(self):
-        if self.check_message and self.check_message_timer > 0:
-            font = pygame.font.Font(None, 36)
-            text = font.render(self.check_message, True, pygame.Color("red"))
-            text_rect = text.get_rect(center=(400, 320))  # Centered on the screen
-            self.screen.blit(text, text_rect)
-            self.check_message_timer -= 1
-
-    def handle_check(self):
-        if self.is_in_check("white"):
-            self.check_message = "Check to White!"
-            self.check_message_timer = 180  # Display for 3 seconds (at 60 FPS)
-        elif self.is_in_check("black"):
-            self.check_message = "Check to Black!"
-            self.check_message_timer = 180
-        else:
-            self.check_message = None
-
     def is_in_check(self, color):
         return self.game.is_in_check(color)
 
@@ -180,12 +160,10 @@ class ChessGUI:
                 continue
 
             if not self.winner_message:
-                self.handle_check()  # Check for check conditions
                 self.draw_board()
                 self.draw_pieces()
                 self.draw_valid_moves()
                 self.draw_captured_pieces()
-                self.display_check_message()  # Display check message if applicable
 
             pygame.display.flip()
             self.clock.tick(30)

@@ -2,25 +2,37 @@ from .pieces import Peon, Torre, Caballo, Alfil, Reina, Rey
 
 class Board:
     def __init__(self):
-        # Represent the board as an 8x8 matrix of lists (to hold multiple pieces)
-        self.board = [[[] for _ in range(8)] for _ in range(8)]
+        # Represent the board as an 8x8 matrix of single pieces
+        self.board = [[None for _ in range(8)] for _ in range(8)]
+        self.initialize_board()
+
+    def initialize_board(self):
+        # Place white pieces
+        self.board[0] = [
+            Torre("white"), Caballo("white"), Alfil("white"), Reina("white"),
+            Rey("white"), Alfil("white"), Caballo("white"), Torre("white")
+        ]
+        self.board[1] = [Peon("white") for _ in range(8)]
+
+        # Place black pieces
+        self.board[7] = [
+            Torre("black"), Caballo("black"), Alfil("black"), Reina("black"),
+            Rey("black"), Alfil("black"), Caballo("black"), Torre("black")
+        ]
+        self.board[6] = [Peon("black") for _ in range(8)]
 
     def place_piece(self, piece, position):
         x, y = position
-        self.board[x][y].append(piece)
+        self.board[x][y] = piece
 
     def remove_piece(self, piece, position):
         x, y = position
-        if piece in self.board[x][y]:
-            self.board[x][y].remove(piece)
-
-    def get_pieces(self, position):
-        x, y = position
-        return self.board[x][y]
+        if self.board[x][y] == piece:
+            self.board[x][y] = None
 
     def display(self):
         for row in self.board:
-            print(" | ".join([" ".join(str(piece) for piece in cell) if cell else " " for cell in row]))
+            print(" | ".join([str(piece) if piece else " " for piece in row]))
         print()
 
     def make_move(self, start_pos, end_pos):

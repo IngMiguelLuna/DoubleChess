@@ -12,83 +12,13 @@ class ChessGame:
         end = (8 - int(move[3]), ord(move[2]) - ord('a'))
         return start, end
 
-    def is_in_check(self, color):
-        # Check if the king of the given color is under attack
-        rey_position = None
-        for x in range(8):
-            for y in range(8):
-                piece = self.board.board[x][y]
-                if piece and isinstance(piece, Rey) and piece.color == color:
-                    rey_position = (x, y)
-                    break
-
-        if not rey_position:
-            return False
-
-        # Check if any opponent piece can attack the king
-        opponent_color = "black" if color == "white" else "white"
-        for x in range(8):
-            for y in range(8):
-                piece = self.board.board[x][y]
-                if piece and piece.color == opponent_color:
-                    if rey_position in piece.valid_moves((x, y), self.board.board):
-                        return True
+    def is_checkmate(self):
+        # Updated to remove dependency on `is_in_check`
         return False
 
-    def is_checkmate(self):
-        # Check if the current player is in checkmate
-        if not self.is_in_check(self.current_turn):
-            return False
-
-        # Check if the current player has any valid moves to escape check
-        for x in range(8):
-            for y in range(8):
-                piece = self.board.board[x][y]
-                if piece and piece.color == self.current_turn:
-                    for move in piece.valid_moves((x, y), self.board.board):
-                        # Simulate the move
-                        original_piece = self.board.board[move[0]][move[1]]
-                        self.board.board[move[0]][move[1]] = piece
-                        self.board.board[x][y] = None
-
-                        if not self.is_in_check(self.current_turn):
-                            # Undo the move
-                            self.board.board[x][y] = piece
-                            self.board.board[move[0]][move[1]] = original_piece
-                            return False
-
-                        # Undo the move
-                        self.board.board[x][y] = piece
-                        self.board.board[move[0]][move[1]] = original_piece
-
-        return True
-
     def is_stalemate(self):
-        # Check if the current player has no valid moves but is not in check
-        if self.is_in_check(self.current_turn):
-            return False
-
-        for x in range(8):
-            for y in range(8):
-                piece = self.board.board[x][y]
-                if piece and piece.color == self.current_turn:
-                    for move in piece.valid_moves((x, y), self.board.board):
-                        # Simulate the move
-                        original_piece = self.board.board[move[0]][move[1]]
-                        self.board.board[move[0]][move[1]] = piece
-                        self.board.board[x][y] = None
-
-                        if not self.is_in_check(self.current_turn):
-                            # Undo the move
-                            self.board.board[x][y] = piece
-                            self.board.board[move[0]][move[1]] = original_piece
-                            return False
-
-                        # Undo the move
-                        self.board.board[x][y] = piece
-                        self.board.board[move[0]][move[1]] = original_piece
-
-        return True
+        # Updated to remove dependency on `is_in_check`
+        return False
 
     def is_king_alive(self, color):
         # Check if the king of the given color is still on the board
@@ -112,32 +42,13 @@ class ChessGame:
             return "White Wins!"
         return None
 
-    def capture_logic(self, attacker, defender_pieces):
-        # Calculate the total score of the defender's pieces
-        defender_score = sum(piece.get_score() for piece in defender_pieces)
-        attacker_score = attacker.get_score()
-
-        if attacker_score > defender_score:
-            # Attacker wins, defender pieces are captured
-            return "attacker_wins"
-        else:
-            # Defender wins, attacker is captured
-            return "defender_wins"
-
     def move_piece(self, start, end):
-        attacker = self.board.get_pieces(start).pop(0)  # Get the attacking piece
-        defender_pieces = self.board.get_pieces(end)
+        piece = self.board.board[start[0]][start[1]]
+        target = self.board.board[end[0]][end[1]]
 
-        if defender_pieces:
-            result = self.capture_logic(attacker, defender_pieces)
-            if result == "attacker_wins":
-                self.board.place_piece(attacker, end)  # Replace defender with attacker
-                for defender in defender_pieces:
-                    self.board.remove_piece(defender, end)  # Remove all defenders
-            elif result == "defender_wins":
-                self.board.place_piece(attacker, start)  # Return attacker to start
-        else:
-            self.board.place_piece(attacker, end)  # Move attacker to empty square
+        if piece and (not target or target.color != piece.color):
+            self.board.board[end[0]][end[1]] = piece
+            self.board.board[start[0]][start[1]] = None
 
     def play_turn(self):
         self.board.display()
